@@ -53,7 +53,7 @@ async function connect() {
   }
   connected = false;
 
-  client = new Client({ clientId: config.clientId });
+  client = new Client({ clientId: config.clientId, clientSecret: config.clientSecret });
 
   client.on('disconnected', () => {
     connected = false;
