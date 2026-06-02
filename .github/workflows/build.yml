@@ -53,6 +53,45 @@ jobs:
           git diff --cached --quiet || git commit -m "chore: update built mod artifacts"
           git push
 
+  build-bridge-exe:
+    name: Package Bridge Executables (pkg)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: bridge/package-lock.json
+
+      - name: Install dependencies
+        working-directory: bridge
+        run: npm ci
+
+      - name: Build executables
+        working-directory: bridge
+        run: npm run build
+
+      - name: Upload Windows executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: proximityvc-bridge-windows
+          path: bridge/proximityvc-bridge-win.exe
+
+      - name: Upload Linux executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: proximityvc-bridge-linux
+          path: bridge/proximityvc-bridge-linux
+
+      - name: Upload macOS executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: proximityvc-bridge-macos
+          path: bridge/proximityvc-bridge-macos
+
   build-bridge:
     name: Build Node.js Bridge
     runs-on: ubuntu-latest
