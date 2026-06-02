@@ -115,7 +115,7 @@ ProximityVC/
   %APPDATA%\.minecraft\config\proximitychat\
 
 Modrinth（プロファイルごとに独立）:
-  %APPDATA%\com.modrinth.theseus\profiles\<プロファイル名>\config\proximitychat\
+  %APPDATA%\ModrinthApp\profiles\<プロファイル名>\config\proximitychat\
 
     ├── proximity_config.json             # Mod 動作設定（全員で共通でよい）
     └── minecraft_discord_map.json        # 【全員で共有】MinecraftUUID → DiscordID マッピング

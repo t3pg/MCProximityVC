@@ -108,7 +108,7 @@ Minecraftを一度起動すると、設定ファイルが**起動したプロフ
 
 **Windows:**
 ```
-%APPDATA%\com.modrinth.theseus\profiles\<プロファイル名>\config\proximitychat\
+%APPDATA%\ModrinthApp\profiles\<プロファイル名>\config\proximitychat\
 ├── proximity_config.json
 └── minecraft_discord_map.json
 ```
