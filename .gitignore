@@ -1,0 +1,13 @@
+# Discord credentials - never commit these
+bridge/config.json
+bridge/token.json
+
+# Node
+bridge/node_modules/
+
+# Env
+.env
+
+.claude
+
+
