@@ -110,9 +110,19 @@ ProximityVC/
             └── ProximityConfig.java       # Mod コンフィグ（最大距離・減衰式等）
 
 【設定ファイルの配置場所（Windows）】
-%APPDATA%\.minecraft\config\proximitychat\
+
+バニラランチャー:
+  %APPDATA%\.minecraft\config\proximitychat\
+
+Modrinth（プロファイルごとに独立）:
+  %APPDATA%\ModrinthApp\profiles\<プロファイル名>\config\proximitychat\
+
     ├── proximity_config.json             # Mod 動作設定（全員で共通でよい）
     └── minecraft_discord_map.json        # 【全員で共有】MinecraftUUID → DiscordID マッピング
+
+> **補足:** Mod は `Minecraft.getInstance().gameDirectory` を使用してパスを解決するため、
+> ランチャーに依存せず起動ディレクトリ相対でファイルを生成する。
+> Modrinth でプロファイルごとにゲームディレクトリが分離されていれば、configファイルも自動的に各プロファイル下に生成される。
 ```
 
 ---
