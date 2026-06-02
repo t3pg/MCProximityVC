@@ -50,6 +50,27 @@ public class ProximityConfig {
         }
     }
 
+    public void reload() {
+        Path file = Minecraft.getInstance().gameDirectory.toPath()
+                .resolve("config").resolve("proximitychat")
+                .resolve("proximity_config.json");
+        try {
+            String json = Files.readString(file);
+            ProximityConfig fresh = new Gson().fromJson(json, ProximityConfig.class);
+            if (fresh == null) throw new JsonSyntaxException("null result");
+            this.bridgePort = fresh.bridgePort;
+            this.maxDistance = fresh.maxDistance;
+            this.minDistance = fresh.minDistance;
+            this.falloffType = fresh.falloffType;
+            this.updateIntervalTicks = fresh.updateIntervalTicks;
+            this.maxVolume = fresh.maxVolume;
+            this.minVolume = fresh.minVolume;
+            ProximityChatMod.LOGGER.info("[ProximityVC] proximity_config.json reloaded.");
+        } catch (IOException | JsonSyntaxException e) {
+            ProximityChatMod.LOGGER.error("[ProximityVC] Failed to reload proximity_config.json: {}", e.getMessage());
+        }
+    }
+
     public int getBridgePort() { return bridgePort; }
     public float getMaxDistance() { return maxDistance; }
     public float getMinDistance() { return minDistance; }
