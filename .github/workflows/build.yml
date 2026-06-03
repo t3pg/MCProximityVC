@@ -25,10 +25,11 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.10"
+          cache-read-only: false
 
       - name: Build mod
         working-directory: mod
-        run: gradle build --no-daemon
+        run: gradle build --no-daemon --build-cache
         env:
           GRADLE_OPTS: "-Xmx3g"
 
@@ -81,12 +82,20 @@ jobs:
           cache: "npm"
           cache-dependency-path: bridge/package-lock.json
 
+      - name: Cache pkg binaries
+        uses: actions/cache@v4
+        with:
+          path: ~/.pkg-cache
+          key: pkg-cache-${{ matrix.target }}-v1
+
       - name: Install dependencies
         working-directory: bridge
         run: npm ci
 
       - name: Build executable
         working-directory: bridge
+        env:
+          PKG_CACHE_PATH: ~/.pkg-cache
         run: npx pkg . --target ${{ matrix.target }} --output ${{ matrix.output }}
 
       - name: Upload artifact
