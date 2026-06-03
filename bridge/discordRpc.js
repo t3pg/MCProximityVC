@@ -4,8 +4,8 @@ const { Client } = require('@xhayper/discord-rpc');
 const fs = require('fs');
 const path = require('path');
 
-const CONFIG_FILE = path.join(process.isBun ? path.dirname(process.execPath) : __dirname, 'config.json');
-const TOKEN_FILE = path.join(process.isBun ? path.dirname(process.execPath) : __dirname, 'token.json');
+const CONFIG_FILE = path.join(__dirname, 'config.json');
+const TOKEN_FILE = path.join(__dirname, 'token.json');
 const SCOPES = ['rpc', 'rpc.voice.read'];
 const RECONNECT_DELAY_MS = 30_000;
 

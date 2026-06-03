@@ -25,11 +25,10 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.10"
-          cache-read-only: false
 
       - name: Build mod
         working-directory: mod
-        run: gradle build --no-daemon --build-cache
+        run: gradle build --no-daemon
         env:
           GRADLE_OPTS: "-Xmx3g"
 
@@ -46,7 +45,7 @@ jobs:
           rm -f dist/*-sources.jar
 
       - name: Commit and push dist
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -55,40 +54,39 @@ jobs:
           git push
 
   build-bridge-exe:
-    name: Package Bridge (all platforms)
+    name: Package Bridge Executables (pkg)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          bun-version: latest
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: bridge/package-lock.json
 
       - name: Install dependencies
         working-directory: bridge
-        run: bun install
+        run: npm ci
 
       - name: Build executables
         working-directory: bridge
-        run: |
-          bun build --compile --target bun-windows-x64 index.js --outfile proximityvc-bridge-win.exe
-          bun build --compile --target bun-linux-x64   index.js --outfile proximityvc-bridge-linux
-          bun build --compile --target bun-darwin-x64  index.js --outfile proximityvc-bridge-macos
+        run: npm run build
 
-      - name: Upload Windows artifact
+      - name: Upload Windows executable
         uses: actions/upload-artifact@v4
         with:
           name: proximityvc-bridge-windows
           path: bridge/proximityvc-bridge-win.exe
 
-      - name: Upload Linux artifact
+      - name: Upload Linux executable
         uses: actions/upload-artifact@v4
         with:
           name: proximityvc-bridge-linux
           path: bridge/proximityvc-bridge-linux
 
-      - name: Upload macOS artifact
+      - name: Upload macOS executable
         uses: actions/upload-artifact@v4
         with:
           name: proximityvc-bridge-macos
