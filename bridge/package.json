@@ -11,11 +11,6 @@
   "pkg": {
     "scripts": [
       "discordRpc.js"
-    ],
-    "targets": [
-      "node20-win-x64",
-      "node20-linux-x64",
-      "node20-macos-x64"
     ]
   },
   "dependencies": {

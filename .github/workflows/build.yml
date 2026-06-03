@@ -54,8 +54,23 @@ jobs:
           git push
 
   build-bridge-exe:
-    name: Package Bridge Executables (pkg)
-    runs-on: ubuntu-latest
+    name: Package Bridge (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: node20-linux-x64
+            output: proximityvc-bridge-linux
+            artifact_name: proximityvc-bridge-linux
+          - os: windows-latest
+            target: node20-win-x64
+            output: proximityvc-bridge-win.exe
+            artifact_name: proximityvc-bridge-windows
+          - os: macos-latest
+            target: node20-macos-x64
+            output: proximityvc-bridge-macos
+            artifact_name: proximityvc-bridge-macos
     steps:
       - uses: actions/checkout@v4
 
@@ -70,27 +85,15 @@ jobs:
         working-directory: bridge
         run: npm ci
 
-      - name: Build executables
+      - name: Build executable
         working-directory: bridge
-        run: npm run build
+        run: npx pkg . --target ${{ matrix.target }} --output ${{ matrix.output }}
 
-      - name: Upload Windows executable
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: proximityvc-bridge-windows
-          path: bridge/proximityvc-bridge-win.exe
-
-      - name: Upload Linux executable
-        uses: actions/upload-artifact@v4
-        with:
-          name: proximityvc-bridge-linux
-          path: bridge/proximityvc-bridge-linux
-
-      - name: Upload macOS executable
-        uses: actions/upload-artifact@v4
-        with:
-          name: proximityvc-bridge-macos
-          path: bridge/proximityvc-bridge-macos
+          name: ${{ matrix.artifact_name }}
+          path: bridge/${{ matrix.output }}
 
   build-bridge:
     name: Build Node.js Bridge
