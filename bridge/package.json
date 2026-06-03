@@ -3,15 +3,11 @@
   "version": "1.0.0",
   "description": "Discord IPC bridge for ProximityVC Minecraft mod",
   "main": "index.js",
-  "bin": "index.js",
   "scripts": {
     "start": "node index.js",
-    "build": "pkg . --output proximityvc-bridge"
-  },
-  "pkg": {
-    "scripts": [
-      "discordRpc.js"
-    ]
+    "build:win":   "bun build --compile --target bun-windows-x64 index.js --outfile proximityvc-bridge-win.exe",
+    "build:linux": "bun build --compile --target bun-linux-x64   index.js --outfile proximityvc-bridge-linux",
+    "build:mac":   "bun build --compile --target bun-darwin-x64  index.js --outfile proximityvc-bridge-macos"
   },
   "dependencies": {
     "@xhayper/discord-rpc": "^1.0.0",
@@ -19,8 +15,5 @@
   },
   "engines": {
     "node": ">=20"
-  },
-  "devDependencies": {
-    "@yao-pkg/pkg": "^6.20.0"
   }
 }

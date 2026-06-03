@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const rpc = require('./discordRpc');
 
-const CONFIG_FILE = path.join(process.pkg ? path.dirname(process.execPath) : __dirname, 'config.json');
+const CONFIG_FILE = path.join(process.isBun ? path.dirname(process.execPath) : __dirname, 'config.json');
 
 function loadAndValidateConfig() {
   let config;
