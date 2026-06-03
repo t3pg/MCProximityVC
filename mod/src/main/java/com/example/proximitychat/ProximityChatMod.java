@@ -9,8 +9,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.event.GameShuttingDownEvent;
-import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import org.slf4j.Logger;
 
 @Mod(ProximityChatMod.MOD_ID)
@@ -39,13 +39,13 @@ public class ProximityChatMod {
 
             NeoForge.EVENT_BUS.addListener(proximityHandler::onClientTick);
             NeoForge.EVENT_BUS.addListener(this::onGameShuttingDown);
-            NeoForge.EVENT_BUS.addListener(this::onRegisterCommands);
+            NeoForge.EVENT_BUS.addListener(this::onRegisterClientCommands);
 
             bridgeClient.startStatusCheckLoop();
         });
     }
 
-    private void onRegisterCommands(RegisterCommandsEvent event) {
+    private void onRegisterClientCommands(RegisterClientCommandsEvent event) {
         if (bridgeClient != null) {
             ProximityCommands.register(event.getDispatcher(), bridgeClient, playerIdMapper, config);
         }
