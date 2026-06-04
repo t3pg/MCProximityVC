@@ -41,8 +41,11 @@ public class ProximityConfig {
 
         try {
             String json = Files.readString(file);
-            ProximityConfig cfg = new Gson().fromJson(json, ProximityConfig.class);
+            ProximityConfig cfg = GSON.fromJson(json, ProximityConfig.class);
             if (cfg == null) throw new JsonSyntaxException("null result");
+            ProximityChatMod.LOGGER.info("[ProximityVC] Config loaded: port={} maxDist={} minDist={} falloff={} interval={}t maxVol={} minVol={}",
+                    cfg.bridgePort, cfg.maxDistance, cfg.minDistance,
+                    cfg.falloffType, cfg.updateIntervalTicks, cfg.maxVolume, cfg.minVolume);
             return cfg;
         } catch (IOException | JsonSyntaxException e) {
             ProximityChatMod.LOGGER.error("[ProximityVC] Failed to parse proximity_config.json: {}", e.getMessage());
@@ -56,7 +59,7 @@ public class ProximityConfig {
                 .resolve("proximity_config.json");
         try {
             String json = Files.readString(file);
-            ProximityConfig fresh = new Gson().fromJson(json, ProximityConfig.class);
+            ProximityConfig fresh = GSON.fromJson(json, ProximityConfig.class);
             if (fresh == null) throw new JsonSyntaxException("null result");
             this.bridgePort = fresh.bridgePort;
             this.maxDistance = fresh.maxDistance;
@@ -65,7 +68,9 @@ public class ProximityConfig {
             this.updateIntervalTicks = fresh.updateIntervalTicks;
             this.maxVolume = fresh.maxVolume;
             this.minVolume = fresh.minVolume;
-            ProximityChatMod.LOGGER.info("[ProximityVC] proximity_config.json reloaded.");
+            ProximityChatMod.LOGGER.info("[ProximityVC] Config reloaded: port={} maxDist={} minDist={} falloff={} interval={}t maxVol={} minVol={}",
+                    this.bridgePort, this.maxDistance, this.minDistance,
+                    this.falloffType, this.updateIntervalTicks, this.maxVolume, this.minVolume);
         } catch (IOException | JsonSyntaxException e) {
             ProximityChatMod.LOGGER.error("[ProximityVC] Failed to reload proximity_config.json: {}", e.getMessage());
         }

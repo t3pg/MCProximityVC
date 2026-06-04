@@ -31,6 +31,7 @@ public class ProximityChatMod {
     private void onClientSetup(FMLClientSetupEvent event) {
         // FMLClientSetupEvent fires on parallel loading threads; enqueueWork() runs on main thread
         event.enqueueWork(() -> {
+            LOGGER.info("[ProximityVC] Initializing...");
             config = ProximityConfig.load();
             playerIdMapper = new PlayerIdMapper();
             playerIdMapper.load();
@@ -42,6 +43,7 @@ public class ProximityChatMod {
             NeoForge.EVENT_BUS.addListener(this::onRegisterClientCommands);
 
             bridgeClient.startStatusCheckLoop();
+            LOGGER.info("[ProximityVC] Initialization complete. {} player mappings loaded.", playerIdMapper.getMappingCount());
         });
     }
 

@@ -33,14 +33,17 @@ function startHttpServer(port) {
     const { userId, volume } = req.body ?? {};
 
     if (typeof userId !== 'string' || typeof volume !== 'number') {
+      console.warn('[ProximityVC] /volume: invalid request body', req.body);
       return res.status(400).json({ ok: false, error: 'invalid fields' });
     }
     const vol = Math.max(0, Math.min(200, Math.round(volume)));
+    console.log(`[ProximityVC] setVolume userId=${userId} vol=${vol}`);
 
     try {
       await rpc.setVolume(userId, vol);
       res.json({ ok: true });
     } catch (err) {
+      console.error(`[ProximityVC] setVolume failed: ${err.message}`);
       res.status(503).json({ ok: false, error: err.message });
     }
   });
@@ -63,4 +66,7 @@ async function main() {
   await rpc.connect();
 }
 
-main();
+main().catch((err) => {
+  console.error('[ProximityVC] Fatal startup error:', err.message);
+  process.exit(1);
+});
