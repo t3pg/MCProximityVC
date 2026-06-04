@@ -36,9 +36,10 @@ function clearToken() {
 
 function scheduleReconnect() {
   if (reconnectTimer) return;
-  console.log(`[ProximityVC] Discord disconnected. Reconnecting in ${RECONNECT_DELAY_MS / 1000}s...`);
+  console.log(`[ProximityVC] Scheduling reconnect in ${RECONNECT_DELAY_MS / 1000}s...`);
   reconnectTimer = setTimeout(() => {
     reconnectTimer = null;
+    console.log('[ProximityVC] Attempting reconnect...');
     connect().catch((err) => console.error('[ProximityVC] Reconnect error:', err.message));
   }, RECONNECT_DELAY_MS);
 }
@@ -62,14 +63,19 @@ async function connect() {
 
   try {
     if (cachedToken) {
+      console.log('[ProximityVC] Using cached token for login...');
       await client.login({ accessToken: cachedToken });
     } else {
+      console.log('[ProximityVC] No cached token. Requesting OAuth authorization...');
       await client.login({
         scopes: SCOPES,
         clientSecret: config.clientSecret,
         redirectUri: 'http://localhost',
       });
-      if (client.accessToken) saveToken(client.accessToken);
+      if (client.accessToken) {
+        saveToken(client.accessToken);
+        console.log('[ProximityVC] Access token cached to token.json.');
+      }
     }
     connected = true;
     console.log('[ProximityVC] Discord connected and authenticated.');
@@ -77,7 +83,7 @@ async function connect() {
     connected = false;
 
     if (cachedToken) {
-      console.error('[ProximityVC] Cached token is invalid. Clearing and retrying full auth...');
+      console.error(`[ProximityVC] Cached token rejected (${err.message}). Clearing and retrying full auth...`);
       clearToken();
       // Use scheduleReconnect so the reconnectTimer guard prevents a concurrent
       // 'disconnected' event from also scheduling a connect().

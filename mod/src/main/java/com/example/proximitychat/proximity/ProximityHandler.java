@@ -1,5 +1,6 @@
 package com.example.proximitychat.proximity;
 
+import com.example.proximitychat.ProximityChatMod;
 import com.example.proximitychat.bridge.BridgeClient;
 import com.example.proximitychat.config.PlayerIdMapper;
 import com.example.proximitychat.config.ProximityConfig;
@@ -59,24 +60,29 @@ public class ProximityHandler {
 
             currentlyVisible.add(otherId);
 
-            if (!Integer.valueOf(volume).equals(lastVolume.get(otherId))) {
+            Integer prev = lastVolume.get(otherId);
+            if (prev == null || prev != volume) {
+                ProximityChatMod.LOGGER.debug("[ProximityVC] {} dist={:.1f} vol: {} -> {}",
+                        other.getGameProfile().getName(), distance, prev == null ? "-" : prev, volume);
                 bridgeClient.setVolume(discordId, volume);
                 lastVolume.put(otherId, volume);
             }
         }
 
-        // Players who left render range: mute per spec §7-3
+        // Players who left render range: mute
         Set<UUID> gone = new HashSet<>(lastVolume.keySet());
         gone.removeAll(currentlyVisible);
         for (UUID id : gone) {
-            playerIdMapper.getDiscordId(id).ifPresent(discordId ->
-                bridgeClient.setVolume(discordId, config.getMinVolume())
-            );
+            playerIdMapper.getDiscordId(id).ifPresent(discordId -> {
+                ProximityChatMod.LOGGER.debug("[ProximityVC] Player {} left range, muting.", id);
+                bridgeClient.setVolume(discordId, config.getMinVolume());
+            });
             lastVolume.remove(id);
         }
     }
 
     public void resetAllVolumes() {
+        ProximityChatMod.LOGGER.info("[ProximityVC] Resetting {} tracked player volumes to max on shutdown.", lastVolume.size());
         lastVolume.forEach((uuid, vol) ->
             playerIdMapper.getDiscordId(uuid).ifPresent(discordId ->
                 bridgeClient.setVolume(discordId, config.getMaxVolume())

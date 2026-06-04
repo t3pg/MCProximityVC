@@ -19,7 +19,8 @@ public class VolumeCalculator {
                 yield maxVol * ratio * ratio;
             }
             case "STEPPED" -> {
-                float step = max / 4.0f;
+                // Divide the distance *range* (not absolute max) into 4 equal tiers
+                float step = (max - min) / 4.0f;
                 int tier = (int) ((distance - min) / step);
                 yield maxVol * (1.0f - tier / 4.0f);
             }
